@@ -1,0 +1,11 @@
+db/**/*
+!db/.empty
+
+incoming/buster/*
+!incoming/buster/.empty
+
+pool/**/*
+!pool/.empty
+
+www/**/*
+!www/.empty

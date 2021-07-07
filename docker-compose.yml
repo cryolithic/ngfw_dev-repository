@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+    repository:
+      build: .
+      environment:
+        REPOSITORY: ${REPOSITORY:-buster}
+      volumes:
+        - ./db:/opt/repository/db
+        - ./incoming:/opt/repository/incoming
+        - ./pool:/opt/repository/pool
+        - ./www:/opt/repository/www
