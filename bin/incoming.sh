@@ -27,7 +27,10 @@ fi
 # include the changes file
 $APTLY_CMD repo include -accept-unsigned $changes_file_path
 
-# publish the repository
-if ! $APTLY_CMD publish repo -origin Untangle -distribution $distribution $distribution $endpoint ; then
-  $APTLY_CMD publish update $distribution $endpoint
+# unpublish the repository to regenerate all architectures
+if $APTLY_CMD publish show $distribution $endpoint 2> /dev/null ; then
+  $APTLY_CMD publish drop $distribution $endpoint
 fi
+
+# publish
+$APTLY_CMD publish repo -origin Untangle -distribution $distribution $distribution $endpoint
