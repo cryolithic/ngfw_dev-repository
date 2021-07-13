@@ -1,0 +1,13 @@
+# as deployed on package-server.u.i
+
+[Unit]
+Description=Untangle Dev Repository
+
+[Service]
+Type=simple
+WorkingDirectory=/srv/ngfw_dev-repository
+ExecStart=inoticoming --foreground ./incoming/buster/ --suffix .changes ./bin/incoming.sh buster {} \;
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
