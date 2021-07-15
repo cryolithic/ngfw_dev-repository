@@ -33,4 +33,4 @@ if $APTLY_CMD publish show $distribution $endpoint 2> /dev/null ; then
 fi
 
 # publish
-$APTLY_CMD publish repo -origin Untangle -distribution $distribution $distribution $endpoint
+$APTLY_CMD publish repo -origin Untangle -architectures amd64,source,arm64 -distribution $distribution $distribution $endpoint
