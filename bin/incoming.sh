@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 set -e
 
@@ -25,7 +25,7 @@ if ! $APTLY_CMD repo show $distribution 2> /dev/null ; then
 fi
 
 # include the changes file
-$APTLY_CMD repo include -accept-unsigned $changes_file_path
+$APTLY_CMD repo include -accept-unsigned -force-replace $changes_file_path
 
 # unpublish the repository to regenerate all architectures
 if $APTLY_CMD publish show $distribution $endpoint 2> /dev/null ; then
@@ -34,3 +34,9 @@ fi
 
 # publish
 $APTLY_CMD publish repo -origin Untangle -architectures amd64,source,arm64 -distribution $distribution $distribution $endpoint
+
+# update PR
+case $CHANGES_FILE in
+  *_amd64.changes)
+    ${BIN_DIR}/summary.sh $REPOSITORY $distribution | ${BIN_DIR}/github-add-status.sh $REPOSITORY $DISTRIBUTION
+esac
