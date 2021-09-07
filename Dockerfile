@@ -12,6 +12,7 @@ RUN apt update -q
 
 RUN apt install --yes aptly
 RUN apt install --yes inoticoming
+RUN apt install --yes jq
 
 # base dir & volumes
 ENV REPO_BASE_DIR=/opt/repository
