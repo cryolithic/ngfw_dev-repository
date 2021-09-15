@@ -8,7 +8,18 @@ BASE_DIR=$(dirname $BIN_DIR)
 CONF_FILE=$BASE_DIR/conf/aptly.conf
 APTLY_CMD="aptly -config=$CONF_FILE"
 
+## functions
+usage() {
+  echo "Usag: $0 <repository> <distribution>"
+  exit 1
+}
+
 ## main
+
+# CLI parameters
+if [[ $# != 2 ]] ; then
+  usage
+fi
 
 # CLI parameters
 REPOSITORY=$1
@@ -18,7 +29,7 @@ DISTRIBUTION=$2
 source_list="deb [trusted=yes] http://package-server/dev/$REPOSITORY $DISTRIBUTION main"
 
 # show distro and source
-echo "Distribution available: $source_list"
+echo $source_list
 # echo
 
 # # show packages
