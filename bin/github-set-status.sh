@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+
 set -e
 
 ## constants
@@ -28,7 +28,7 @@ GITHUB_REPO=$1
 GITHUB_BRANCH=$2
 GITHUB_STATUS_CONTEXT=$3
 GITHUB_STATUS_STATE=$4
-log "started with github_repo=$REPO, github_branch=$GITHUB_BRANCH, github_status_context=$GITHUB_STATUS_CONTEXT, github_status_state=$GITHUB_STATUS_STATE"
+log "started with github_repo=$GITHUB_REPO, github_branch=$GITHUB_BRANCH, github_status_context=$GITHUB_STATUS_CONTEXT, github_status_state=$GITHUB_STATUS_STATE"
 
 case $GITHUB_STATUS_CONTEXT in
   dev-packages)
@@ -47,7 +47,7 @@ esac
 export GITHUB_TOKEN
 
 # latest commit in this PR
-json=$(curl -s -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/search/issues?q=${GITHUB_BRANCH}+repo:untangle/${GITHUB_REPO}+type:pr")
+json=$(curl -s -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/search/issues?q=+head:${GITHUB_BRANCH}+repo:untangle/${GITHUB_REPO}+type:pr")
 pr_number=$(echo $json | jq -r '.items[0].number')
 log "  PR number: $pr_number"
 log "  PR URL: https://github.com/untangle/$GITHUB_REPO/pull/$pr_number"
@@ -65,4 +65,4 @@ curl -s \
   -H "Authorization: token $GITHUB_TOKEN" \
   -H "Accept: application/vnd.github.v3+json" \
   -d '{"state":"'$GITHUB_STATUS_STATE'", "target_url":"'$github_status_target_url'", "context":"'$GITHUB_STATUS_CONTEXT'", "description":"'"${github_status_desc}"'"}' \
-  https://api.github.com/repos/untangle/${GITHUB_REPO}/statuses/$last_commit
+  https://api.github.com/repos/untangle/${GITHUB_REPO}/statuses/$last_commit > /dev/null
