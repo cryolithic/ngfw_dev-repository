@@ -64,13 +64,13 @@ $APTLY_CMD publish repo -origin Untangle -architectures amd64,source,arm64 -dist
 # set GitHub's dev-packages status for this PR to success
 case $CHANGES_FILE in
   *_amd64.changes)
-    ${BIN_DIR}/summary.sh $REPOSITORY $distribution | $GITHUB_SET_STATUS_CMD $github_repo $github_branch dev-packages success ;;
-  *)
-    : ;;
+    summary=$(${BIN_DIR}/summary.sh $REPOSITORY $distribution)
+    $GITHUB_SET_STATUS_CMD $github_repo $github_branch dev-packages success "https://intranet.untangle.com/display/ngfw/Testing+packages+built+directly+from+GitHub+pull+requests" success
+    ;;
 esac
 
 # start ATS and set GitHub's ATS status for this PR to pending
 if [[ $github_repo =~ "ngfw" ]] && [[ $CHANGES_FILE =~ "_amd64.changes" ]] ; then
   ats_url=$($GITHUB_START_ATS_CMD $distribution)
-  echo $ats_url | $GITHUB_SET_STATUS_CMD $github_repo $github_branch ATS pending
+  $GITHUB_SET_STATUS_CMD $github_repo $github_branch ATS pending "$ats_url" pending
 fi
