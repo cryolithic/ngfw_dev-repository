@@ -65,7 +65,7 @@ $APTLY_CMD publish repo -origin Untangle -architectures amd64,source,arm64 -dist
 case $CHANGES_FILE in
   *_amd64.changes)
     summary=$(${BIN_DIR}/summary.sh $REPOSITORY $distribution)
-    $GITHUB_SET_STATUS_CMD $github_repo $github_branch dev-packages success "https://intranet.untangle.com/display/ngfw/Testing+packages+built+directly+from+GitHub+pull+requests" success
+    $GITHUB_SET_STATUS_CMD $github_repo $github_branch dev-packages success "https://intranet.untangle.com/display/ngfw/Testing+packages+built+directly+from+GitHub+pull+requests" "$summary"
     ;;
 esac
 
