@@ -74,11 +74,6 @@ json=$(curl -s \
 new_commit=$(echo $json | jq -r '.sha')
 log "created new commit $new_commit"
 
-# sleep to let jenkins notice the new branch: it often fails on new
-# branches at the "branch indexing" stage
-log "sleeping 30s"
-sleep 30
-
 # update branch
 curl -s \
      -X POST \
