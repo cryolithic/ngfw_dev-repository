@@ -35,10 +35,12 @@ master_commit=$(echo $branches | jq -r '.[] | select(.name == "master") | .commi
 
 # create a new branch if necessary in ats-podman, with the same name
 # as the current one, and push a commit on it; this will start ATS on
-# that branch, and the magic extra_dev_distribution will ensure this
-# run includes packages from our newly created distribution
+# that branch, and the magic extra_dev_distribution parameter will
+# have that ATS run include packages from our newly created
+# distribution
 
 branch_commit=$(echo $branches | jq -r '.[] | select(.name == "'${DISTRIBUTION}'") | .commit.sha')
+log "existing branch commit: $branch_commit"
 
 if [[ -z "$branch_commit" ]] ; then
   curl -s \
@@ -47,7 +49,9 @@ if [[ -z "$branch_commit" ]] ; then
        -H "Accept: application/vnd.github.v3+json" \
        -d '{"ref":"refs/heads/'${DISTRIBUTION}'", "sha":"'${master_commit}'"}' \
        https://api.github.com/repos/untangle/ats-podman/git/refs > /dev/null
+  branches=$(curl -s -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/untangle/ats-podman/branches)
   branch_commit=$(echo $branches | jq -r '.[] | select(.name == "'${DISTRIBUTION}'") | .commit.sha')
+  log "created new branch with commit $branch_commit"
 fi
 
 commit_info=$(curl -s \
@@ -58,6 +62,7 @@ commit_info=$(curl -s \
 		   https://api.github.com/repos/untangle/ats-podman/commits/${branch_commit})
 
 tree_sha=$(echo $commit_info | jq -r '.commit.tree.sha')
+log "tree sha: $tree_sha"
 
 # create commit
 json=$(curl -s \
@@ -67,6 +72,12 @@ json=$(curl -s \
 	    -d '{"message":"Trigger ATS", "parents":["'${branch_commit}'"], "tree":"'${tree_sha}'" }' \
 	    https://api.github.com/repos/untangle/ats-podman/git/commits)
 new_commit=$(echo $json | jq -r '.sha')
+log "created new commit $new_commit"
+
+# sleep to let jenkins notice the new branch: it often fails on new
+# branches at the "branch indexing" stage
+log "sleeping 30s"
+sleep 30
 
 # update branch
 curl -s \
@@ -75,8 +86,8 @@ curl -s \
      -H "Accept: application/vnd.github.v3+json" \
      -d '{"sha":"'${new_commit}'" }' \
      https://api.github.com/repos/untangle/ats-podman/git/refs/heads/${DISTRIBUTION} > /dev/null
+log "pushed that new commit on branch"
 
 ats_url="http://jenkins.untangle.int/blue/organizations/jenkins/ats-podman/activity?branch=${DISTRIBUTION}"
 
 echo $ats_url
-
