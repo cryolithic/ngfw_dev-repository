@@ -70,7 +70,7 @@ case $CHANGES_FILE in
 esac
 
 # start ATS and set GitHub's ATS status for this PR to pending
-if [[ $github_repo =~ "ngfw" ]] && [[ $CHANGES_FILE =~ "_amd64.changes" ]] ; then
+if [[ $github_repo =~ "ngfw" ]] && [[ $CHANGES_FILE =~ "_amd64.changes" ]] && [[ $REPOSITORY == "buster" ]]; then
   ats_url=$($GITHUB_START_ATS_CMD $distribution)
   $GITHUB_SET_STATUS_CMD $github_repo $github_branch ATS pending "$ats_url" pending
 fi
