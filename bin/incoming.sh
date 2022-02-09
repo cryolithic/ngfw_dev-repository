@@ -59,7 +59,7 @@ if $APTLY_CMD publish show $distribution $endpoint 2> /dev/null ; then
 fi
 
 # publish
-$APTLY_CMD publish repo -origin Untangle -architectures amd64,source,arm64 -distribution $distribution $distribution $endpoint
+$APTLY_CMD publish repo -origin Untangle-dev -architectures amd64,source,arm64 -distribution $distribution $distribution $endpoint
 
 # set GitHub's dev-packages status for this PR to success
 case $CHANGES_FILE in
