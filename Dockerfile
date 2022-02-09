@@ -13,6 +13,7 @@ RUN echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/no-recommends 
 RUN apt update -q
 
 RUN apt install --yes aptly
+RUN apt install --yes ca-certificates
 RUN apt install --yes curl
 RUN apt install --yes inoticoming
 RUN apt install --yes jq
