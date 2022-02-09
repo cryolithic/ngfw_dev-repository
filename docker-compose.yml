@@ -1,10 +1,22 @@
 version: '3'
 
 services:
-    repository:
+    repository_buster:
       build: .
+      restart: unless-stopped
       environment:
-        REPOSITORY: ${REPOSITORY:-buster}
+        REPOSITORY: buster
+      volumes:
+        - ./db:/opt/repository/db
+        - ./incoming:/opt/repository/incoming
+        - ./pool:/opt/repository/pool
+        - ./www:/opt/repository/www
+
+    repository_bullseye:
+      build: .
+      restart: unless-stopped
+      environment:
+        REPOSITORY: bullseye
       volumes:
         - ./db:/opt/repository/db
         - ./incoming:/opt/repository/incoming
