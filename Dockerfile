@@ -2,6 +2,8 @@ FROM debian:buster-backports
 
 LABEL maintainer="Sebastien Delafond <sdelafond@gmail.com>"
 
+ARG REPOSITORY=buster
+
 USER root
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -11,6 +13,7 @@ RUN echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/no-recommends 
 RUN apt update -q
 
 RUN apt install --yes aptly
+RUN apt install --yes curl
 RUN apt install --yes inoticoming
 RUN apt install --yes jq
 
@@ -38,10 +41,9 @@ VOLUME ${REPO_BASE_DIR}/${WWW_DIR}
 
 WORKDIR ${REPO_BASE_DIR}
 
-# copy conf and binary
-COPY ${CONF_DIR}/aptly.conf ${CONF_DIR}/
-COPY ${BIN_DIR}/incoming.sh ${BIN_DIR}/
+# copy required files
+COPY .env .
+COPY ${CONF_DIR}/* ${CONF_DIR}/
+COPY ${BIN_DIR}/* ${BIN_DIR}/
 
-# FIXME: variabilize buster
-ENV REPO_NAME=buster
-CMD inoticoming --foreground ./${INCOMING_DIR}/${REPO_NAME} --suffix .changes ./${BIN_DIR}/incoming.sh ${REPO_NAME} {} \;
+CMD inoticoming --foreground ./${INCOMING_DIR}/${REPOSITORY} --suffix .changes ./${BIN_DIR}/incoming.sh ${REPOSITORY} {} \;
