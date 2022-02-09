@@ -41,8 +41,21 @@ Travis uploads as `buildbot`:
 
 ## Service
 
-Processing incoming packages can be with the provided docker-compose
-setup, but as package-server is still a 32bit machine we instead use the
+Two solutions are provided.
+
+### docker-compose
+
+Processing incoming packages is deployed on `package-server` via the
+docker-compose setup:
+
+```
+docker-compose -f /srv/ngfw_dev-repository/docker-compose.yml up -d repository_buster
+docker-compose -f /srv/ngfw_dev-repository/docker-compose.yml up -d repository_bullseye
+```
+
+### systemd
+
+Alternatively, it can also be started with the
 `ngfw-dev-repository.service` systemd service:
 
   ```
@@ -53,6 +66,13 @@ setup, but as package-server is still a 32bit machine we instead use the
   
 ## Logs
 
-They are handled by systemd:
+### docker-compose
+
+```
+docker-compose -f /srv/ngfw_dev-repository/docker-compose.yml logs -t -f repository_buster
+docker-compose -f /srv/ngfw_dev-repository/docker-compose.yml logs -t -f repository_bullseye
+```
+
+### systemd
 
 `journalctl -f -u ngfw-dev-repository`
